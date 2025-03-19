@@ -30,6 +30,8 @@ export default [
       ...ts.configs.recommended.rules,
       "react/react-in-jsx-scope": "off", // 🚀 Desativa a exigência de importação do React
       "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-empty-interface": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
     },
   },
 
