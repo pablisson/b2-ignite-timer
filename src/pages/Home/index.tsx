@@ -21,12 +21,22 @@ const newCycleFromValidationScheme = zod.object({
     .max(60, "Informe um valor entre 5 e 60"),
 });
 
-export function Home() {
-  const { register, handleSubmit, watch, formState } = useForm({
-    resolver: zodResolver(newCycleFromValidationScheme),
-  });
+interface NewCycleFormData {
+  task: string;
+  minutesAmount: number;
+}
 
-  function handleCreateNewCycle(data: any) {
+export function Home() {
+  const { register, handleSubmit, watch, formState } =
+    useForm<NewCycleFormData>({
+      resolver: zodResolver(newCycleFromValidationScheme),
+      defaultValues: {
+        task: "",
+        minutesAmount: 0,
+      },
+    });
+
+  function handleCreateNewCycle(data: NewCycleFormData) {
     console.log(data);
   }
 
