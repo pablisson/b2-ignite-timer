@@ -68,10 +68,22 @@ const STATUS_COLORS = {
 };
 
 interface StatusProps {
-  status: keyof typeof STATUS_COLORS;
+  statusProperty: "yellow" | "red" | "green";
 }
 
-export const Status = styled.span<StatusProps>`
+/**
+ * Essa forma de fazer é mais comun mas estava gerando um erro no código então a
+ * solução que eu encontrei foi a que coloquei abaixo.
+ * 
+ * O erro indicava que a statusProperty estava sendo passada para o DOM e isso 
+ * não pode acontecer
+ * 
+ * export const Status = styled.span<StatusProps>`
+ */
+
+export const Status = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== "statusProperty",
+})<StatusProps>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -81,6 +93,6 @@ export const Status = styled.span<StatusProps>`
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
-    background: ${(props) => props.theme[STATUS_COLORS[props.status]]};
+    background: ${(props) => props.theme[STATUS_COLORS[props.statusProperty]]};
   }
 `;
