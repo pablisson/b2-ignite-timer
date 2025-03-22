@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { differenceInSeconds } from "date-fns"
 import { Play } from "phosphor-react"
 import { useForm } from "react-hook-form"
 import * as zod from "zod"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   CountdownContainer,
   FormContainer,
@@ -18,17 +19,17 @@ const newCycleFromValidationScheme = zod.object({
   task: zod.string().min(1, "Informe a tarefa"),
   minutesAmount: zod
     .number()
-    .min(5, "Informe um valor entre 5 e 60")
+    .min(1, "Informe um valor entre 5 e 60")
     .max(60, "Informe um valor entre 5 e 60"),
 })
 
-type NewCycleFormData = zod.infer<typeof newCycleFromValidationScheme>;
+type NewCycleFormData = zod.infer<typeof newCycleFromValidationScheme>
 
 interface Cycle {
-  id: string;
-  task: string;
-  minutesAmount: number;
-  startDate: Date;
+  id: string
+  task: string
+  minutesAmount: number
+  startDate: Date
 }
 
 export function Home() {
@@ -44,6 +45,19 @@ export function Home() {
         minutesAmount: 0,
       },
     })
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  useEffect(() => {
+    if (activeCycle) {
+      // O setInterval não retorna exatamente os segundos configurados, isso
+      // depende da velocidade do processador e as vezes do navegador
+      setInterval(() => {
+        setAmountSecondsPassed(
+          differenceInSeconds(new Date(), activeCycle.startDate),
+        )
+      }, 1000)
+    }
+  }, [activeCycle])
 
   function handleCreateNewCycle(data: NewCycleFormData) {
     const id = new Date().getTime().toString()
@@ -51,16 +65,14 @@ export function Home() {
       id,
       task: data.task,
       minutesAmount: data.minutesAmount,
+      startDate: new Date(),
     }
 
-    //console.log(data);
     setCycles((prevCycles) => [...prevCycles, newCycle])
     setActiveCycleId(id)
-    //console.log(cycles);
     reset()
   }
 
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
   console.log(activeCycle)
 
   console.log(formState.errors)
@@ -100,7 +112,6 @@ export function Home() {
             id="minutesAmount"
             placeholder="00"
             step={5}
-            min={5}
             {...register("minutesAmount", { valueAsNumber: true })}
           />
 
