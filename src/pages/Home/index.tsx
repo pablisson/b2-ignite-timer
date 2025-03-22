@@ -1,9 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Play } from "phosphor-react";
-import { useForm } from "react-hook-form";
-import * as zod from "zod";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Play } from "phosphor-react"
+import { useForm } from "react-hook-form"
+import * as zod from "zod"
 
-import { useState } from "react";
+import { useState } from "react"
 import {
   CountdownContainer,
   FormContainer,
@@ -12,7 +12,7 @@ import {
   Separator,
   StartCountdownButton,
   TaskInput,
-} from "./styles";
+} from "./styles"
 
 const newCycleFromValidationScheme = zod.object({
   task: zod.string().min(1, "Informe a tarefa"),
@@ -20,7 +20,7 @@ const newCycleFromValidationScheme = zod.object({
     .number()
     .min(5, "Informe um valor entre 5 e 60")
     .max(60, "Informe um valor entre 5 e 60"),
-});
+})
 
 type NewCycleFormData = zod.infer<typeof newCycleFromValidationScheme>;
 
@@ -28,13 +28,13 @@ interface Cycle {
   id: string;
   task: string;
   minutesAmount: number;
-  isActived?: boolean;
+  startDate: Date;
 }
 
 export function Home() {
-  const [cycles, setCycles] = useState<Cycle[]>([]);
-  const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
-  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
+  const [cycles, setCycles] = useState<Cycle[]>([])
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
   const { register, handleSubmit, watch, formState, reset } =
     useForm<NewCycleFormData>({
@@ -43,37 +43,37 @@ export function Home() {
         task: "",
         minutesAmount: 0,
       },
-    });
+    })
 
   function handleCreateNewCycle(data: NewCycleFormData) {
-    const id = new Date().getTime().toString();
+    const id = new Date().getTime().toString()
     const newCycle: Cycle = {
       id,
       task: data.task,
       minutesAmount: data.minutesAmount,
-    };
+    }
 
     //console.log(data);
-    setCycles((prevCycles) => [...prevCycles, newCycle]);
-    setActiveCycleId(id);
+    setCycles((prevCycles) => [...prevCycles, newCycle])
+    setActiveCycleId(id)
     //console.log(cycles);
-    reset();
+    reset()
   }
 
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
-  console.log(activeCycle);
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+  console.log(activeCycle)
 
-  console.log(formState.errors);
-  const task = watch("task");
-  const isSubmitDisabled = !task;
-  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
-  const currentSeconds = totalSeconds - amountSecondsPassed;
+  console.log(formState.errors)
+  const task = watch("task")
+  const isSubmitDisabled = !task
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
+  const currentSeconds = totalSeconds - amountSecondsPassed
 
-  const minutesAmount = Math.floor(currentSeconds / 60);
-  const secondsAmount = currentSeconds % 60;
+  const minutesAmount = Math.floor(currentSeconds / 60)
+  const secondsAmount = currentSeconds % 60
 
-  const minutes = String(minutesAmount).padStart(2, "0");
-  const seconds = String(secondsAmount).padStart(2, "0");
+  const minutes = String(minutesAmount).padStart(2, "0")
+  const seconds = String(secondsAmount).padStart(2, "0")
 
   return (
     <HomeContainer>
@@ -121,5 +121,5 @@ export function Home() {
         </StartCountdownButton>
       </form>
     </HomeContainer>
-  );
+  )
 }
