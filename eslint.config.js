@@ -1,11 +1,11 @@
-import pluginJs from "@eslint/js";
+import pluginJs from "@eslint/js"
 // import pluginReact from "eslint-plugin-react";
-import jsxA11y from "eslint-plugin-jsx-a11y";
-import react from "eslint-plugin-react";
-import globals from "globals";
+import jsxA11y from "eslint-plugin-jsx-a11y"
+import react from "eslint-plugin-react"
+import globals from "globals"
 
-import tseslint from "@typescript-eslint/eslint-plugin";
-import tsparser from "@typescript-eslint/parser";
+import tseslint from "@typescript-eslint/eslint-plugin"
+import tsparser from "@typescript-eslint/parser"
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -45,15 +45,6 @@ export default [
 
       //configurações rocketseat
       "react/self-closing-comp": "error",
-      // 'prettier/prettier': ["error", {
-      //   'printWidth': 80,
-      //   'tabWidth': 2,
-      //   'singleQuote': true,
-      //   'trailingComma': 'all',
-      //   'arrowParens': 'always',
-      //   'semi': false,
-      //   'endOfLine': 'auto',
-      // }],
 
       "react/prop-types": "off",
       "jsxA11y/alt-text": [
@@ -71,4 +62,4 @@ export default [
       "react/no-unknown-property": "error",
     },
   },
-];
+]
