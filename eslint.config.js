@@ -1,6 +1,6 @@
 import pluginJs from "@eslint/js";
 // import pluginReact from "eslint-plugin-react";
-import jsxA11y from 'eslint-plugin-jsx-a11y';
+import jsxA11y from "eslint-plugin-jsx-a11y";
 import react from "eslint-plugin-react";
 import globals from "globals";
 
@@ -11,15 +11,15 @@ import tsparser from "@typescript-eslint/parser";
 export default [
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
-    languageOptions: { 
+    languageOptions: {
       globals: globals.browser,
-      parser: tsparser, 
+      parser: tsparser,
       parserOptions: {
         ecmaFeatures: {
-          jsx: true
+          jsx: true,
         },
-        ecmaVersion: 'latest',
-        sourceType: 'module'
+        ecmaVersion: "latest",
+        sourceType: "module",
       },
     },
     plugins: {
@@ -41,34 +41,33 @@ export default [
       "@typescript-eslint/no-unused-vars": "warn",
       "@typescript-eslint/no-empty-interface": "off",
       "@typescript-eslint/no-empty-object-type": "off",
-      
+
       //configurações rocketseat
       "react/self-closing-comp": "error",
-      'prettier/prettier': ["error", {
-        'printWidth': 80,
-        'tabWidth': 2,
-        'singleQuote': true,
-        'trailingComma': 'all',
-        'arrowParens': 'always',
-        'semi': false,
-        'endOfLine': 'auto',
-      }],
+      // 'prettier/prettier': ["error", {
+      //   'printWidth': 80,
+      //   'tabWidth': 2,
+      //   'singleQuote': true,
+      //   'trailingComma': 'all',
+      //   'arrowParens': 'always',
+      //   'semi': false,
+      //   'endOfLine': 'auto',
+      // }],
 
-      'react/prop-types': 'off',
-      'jsx-a11y/alt-text': [
-        'warn',
+      "react/prop-types": "off",
+      "jsxA11y/alt-text": [
+        "warn",
         {
-          elements: ['img'],
-          img: ['Image'],
+          elements: ["img"],
+          img: ["Image"],
         },
       ],
-      'jsx-a11y/aria-props': 'warn',
-      'jsx-a11y/aria-proptypes': 'warn',
-      'jsx-a11y/aria-unsupported-elements': 'warn',
-      'jsx-a11y/role-has-required-aria-props': 'warn',
-      'jsx-a11y/role-supports-aria-props': 'warn',
-      'react/no-unknown-property': 'error',      
+      "jsxA11y/aria-props": "warn",
+      "jsxA11y/aria-proptypes": "warn",
+      "jsxA11y/aria-unsupported-elements": "warn",
+      "jsxA11y/role-has-required-aria-props": "warn",
+      "jsxA11y/role-supports-aria-props": "warn",
+      "react/no-unknown-property": "error",
     },
   },
-
 ];
