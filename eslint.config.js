@@ -41,6 +41,7 @@ export default [
       "@typescript-eslint/no-unused-vars": "warn",
       "@typescript-eslint/no-empty-interface": "off",
       "@typescript-eslint/no-empty-object-type": "off",
+      semi: ["error", "never"],
 
       //configurações rocketseat
       "react/self-closing-comp": "error",
