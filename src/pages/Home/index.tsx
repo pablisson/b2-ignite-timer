@@ -33,6 +33,7 @@ interface Cycle {
 
 export function Home() {
   const [cycles, setCycles] = useState<Cycle[]>([]);
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
 
   const { register, handleSubmit, watch, formState, reset } =
     useForm<NewCycleFormData>({
@@ -44,17 +45,22 @@ export function Home() {
     });
 
   function handleCreateNewCycle(data: NewCycleFormData) {
+    const id = new Date().getTime().toString();
     const newCycle: Cycle = {
-      id: new Date().getTime().toString(),
+      id,
       task: data.task,
       minutesAmount: data.minutesAmount,
     };
-    console.log(data);
-    setCycles((prevCycles) => [...prevCycles, newCycle]);
 
-    console.log(cycles);
+    //console.log(data);
+    setCycles((prevCycles) => [...prevCycles, newCycle]);
+    setActiveCycleId(id);
+    //console.log(cycles);
     reset();
   }
+
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
+  console.log(activeCycle);
 
   console.log(formState.errors);
   const task = watch("task");
