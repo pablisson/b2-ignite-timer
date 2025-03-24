@@ -32,6 +32,7 @@ interface Cycle {
   minutesAmount: number
   startDate: Date
   interruptedDate?: Date
+  finishedDate?: Date
 }
 
 export function Home() {
@@ -47,25 +48,8 @@ export function Home() {
         minutesAmount: 0,
       },
     })
+  console.log(formState.errors)
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
-  useEffect(() => {
-    let interval: number
-
-    if (activeCycle) {
-      // O setInterval não retorna exatamente os segundos configurados, isso
-      // depende da velocidade do processador e as vezes do navegador
-      interval = setInterval(() => {
-        setAmountSecondsPassed(
-          differenceInSeconds(new Date(), activeCycle.startDate),
-        )
-      }, 1000)
-    }
-
-    return () => {
-      clearInterval(interval)
-    }
-  }, [activeCycle])
 
   function handleCreateNewCycle(data: NewCycleFormData) {
     const id = new Date().getTime().toString()
@@ -83,8 +67,8 @@ export function Home() {
   }
 
   function handleInterruptCycle() {
-    setCycles(
-      cycles.map((cycle) => {
+    setCycles((prevCycles) =>
+      prevCycles.map((cycle) => {
         if (cycle.id === activeCycleId) {
           return {
             ...cycle,
@@ -98,9 +82,27 @@ export function Home() {
 
     setActiveCycleId(null)
   }
+
+  function handleFinishCycle() {
+    setCycles((prevCycles) =>
+      prevCycles.map((cycle) => {
+        if (cycle.id === activeCycleId) {
+          return {
+            ...cycle,
+            finishedDate: new Date(),
+          }
+        }
+
+        return cycle
+      }),
+    )
+
+    setActiveCycleId(null)
+  }
+
   const hasActiveCycle = !!activeCycle
   const totalSeconds = hasActiveCycle ? activeCycle.minutesAmount * 60 : 0
-  const currentSeconds = hasActiveCycle ? totalSeconds - amountSecondsPassed: 0
+  const currentSeconds = hasActiveCycle ? totalSeconds - amountSecondsPassed : 0
 
   const minutesAmount = Math.floor(currentSeconds / 60)
   const secondsAmount = currentSeconds % 60
@@ -110,6 +112,32 @@ export function Home() {
 
   const task = watch("task")
   const isSubmitDisabled = !task
+
+  useEffect(() => {
+    let interval: number
+
+    if (activeCycle) {
+      interval = setInterval(() => {
+        const secondsDifference = differenceInSeconds(
+          new Date(),
+          activeCycle.startDate,
+        )
+
+        const isFinashedCycle = secondsDifference >= totalSeconds
+        if (isFinashedCycle) {
+          clearInterval(interval)
+          return handleFinishCycle()
+        } else {
+          setAmountSecondsPassed(secondsDifference)
+        }
+      }, 1000)
+    }
+
+    return () => {
+      clearInterval(interval)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCycle, totalSeconds, activeCycleId])
 
   useEffect(() => {
     if (activeCycle) {
@@ -146,6 +174,8 @@ export function Home() {
             id="minutesAmount"
             placeholder="00"
             step={5}
+            max={60}
+            min={1}
             {...register("minutesAmount", { valueAsNumber: true })}
             disabled={!!activeCycle}
           />
