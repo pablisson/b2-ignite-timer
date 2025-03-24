@@ -31,6 +31,7 @@ interface Cycle {
   task: string
   minutesAmount: number
   startDate: Date
+  interruptedDate?: Date
 }
 
 export function Home() {
@@ -81,13 +82,25 @@ export function Home() {
     reset()
   }
 
-  console.log(activeCycle)
+  function handleInterruptCycle() {
+    setCycles(
+      cycles.map((cycle) => {
+        if (cycle.id === activeCycleId) {
+          return {
+            ...cycle,
+            interruptedDate: new Date(),
+          }
+        }
 
-  console.log(formState.errors)
-  const task = watch("task")
-  const isSubmitDisabled = !task
-  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
-  const currentSeconds = totalSeconds - amountSecondsPassed
+        return cycle
+      }),
+    )
+
+    setActiveCycleId(null)
+  }
+  const hasActiveCycle = !!activeCycle
+  const totalSeconds = hasActiveCycle ? activeCycle.minutesAmount * 60 : 0
+  const currentSeconds = hasActiveCycle ? totalSeconds - amountSecondsPassed: 0
 
   const minutesAmount = Math.floor(currentSeconds / 60)
   const secondsAmount = currentSeconds % 60
@@ -95,12 +108,18 @@ export function Home() {
   const minutes = String(minutesAmount).padStart(2, "0")
   const seconds = String(secondsAmount).padStart(2, "0")
 
+  const task = watch("task")
+  const isSubmitDisabled = !task
+
   useEffect(() => {
     if (activeCycle) {
       document.title = `${minutes}:${seconds}`
     }
     document.title = `${document.title} Pomodoro `
-  }, [minutes, seconds])
+  }, [minutes, seconds, activeCycle])
+
+  console.log(cycles)
+
   return (
     <HomeContainer>
       <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
@@ -110,6 +129,7 @@ export function Home() {
             id="task"
             list="task-suggestions"
             placeholder="Dê um nome para o seu projeto"
+            disabled={!!activeCycle}
             {...register("task")}
           />
 
@@ -127,6 +147,7 @@ export function Home() {
             placeholder="00"
             step={5}
             {...register("minutesAmount", { valueAsNumber: true })}
+            disabled={!!activeCycle}
           />
 
           <span>minutos.</span>
@@ -141,9 +162,9 @@ export function Home() {
         </CountdownContainer>
 
         {activeCycle ? (
-          <StopCountdownButton type="submit">
+          <StopCountdownButton onClick={handleInterruptCycle} type="submit">
             <HandPalm size={24} />
-            Iniciar
+            Interromper
           </StopCountdownButton>
         ) : (
           <StartCountdownButton disabled={isSubmitDisabled} type="submit">
