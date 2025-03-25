@@ -1,40 +1,11 @@
-import { useEffect, useState } from "react"
 import { CountdownContainer, Separator } from "./styles"
-import { differenceInSeconds } from "date-fns"
 import { useCycles } from "../../../../hooks/useCycles"
 
 export function CountDown() {
-  const { activeCycle, activeCycleId, markCycleAsFinished } = useCycles()
-  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
+  const { activeCycle, amountSecondsPassed } = useCycles()
   const hasActiveCycle = !!activeCycle
   const totalSeconds = hasActiveCycle ? activeCycle.minutesAmount * 60 : 0
   const currentSeconds = hasActiveCycle ? totalSeconds - amountSecondsPassed : 0
-
-  useEffect(() => {
-    let interval: number
-
-    if (activeCycle) {
-      interval = setInterval(() => {
-        const secondsDifference = differenceInSeconds(
-          new Date(),
-          activeCycle.startDate,
-        )
-
-        const isFinashedCycle = secondsDifference >= totalSeconds
-        if (isFinashedCycle) {
-          clearInterval(interval)
-          markCycleAsFinished()
-        } else {
-          setAmountSecondsPassed(secondsDifference)
-        }
-      }, 1000)
-    }
-
-    return () => {
-      clearInterval(interval)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCycle, totalSeconds, activeCycleId])
 
   const minutesAmount = Math.floor(currentSeconds / 60)
   const secondsAmount = currentSeconds % 60

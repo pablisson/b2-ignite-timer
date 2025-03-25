@@ -1,6 +1,12 @@
-import { createContext, ReactNode, useState } from "react"
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useState,
+} from "react"
 
-interface Cycle {
+export interface Cycle {
   id: string
   task: string
   minutesAmount: number
@@ -11,11 +17,12 @@ interface Cycle {
 
 interface CycleContextType {
   cycles: Cycle[]
+  setCycles: Dispatch<SetStateAction<Cycle[]>>
   activeCycleId: string | null
+  setActiveCycleId: Dispatch<SetStateAction<string | null>>
+  amountSecondsPassed: number
+  setAmountSecondsPassed: Dispatch<SetStateAction<number>>
   activeCycle: Cycle | undefined
-  markCycleAsFinished: () => void
-  handleFinishCycle: () => Cycle | undefined
-  handleInterruptCycle: () => void
 }
 
 interface CyclesContextProviderProps {
@@ -31,85 +38,19 @@ export function CyclesContextProvider({
 }: CyclesContextProviderProps) {
   const [cycles, setCycles] = useState<Cycle[]>([])
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
-  function markCycleAsFinished() {
-    setCycles((prevCycles) =>
-      prevCycles.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return {
-            ...cycle,
-            finishedDate: new Date(),
-          }
-        }
-
-        return cycle
-      }),
-    )
-  }
-
-  function handleFinishCycle(): Cycle | undefined {
-    let finishedCycle: Cycle | undefined
-
-    setCycles((prevCycles) =>
-      prevCycles.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          finishedCycle = {
-            ...cycle,
-            finishedDate: new Date(),
-          }
-          return finishedCycle
-        }
-
-        return cycle
-      }),
-    )
-
-    setActiveCycleId(null)
-    return finishedCycle
-  }
-
-  function handleInterruptCycle() {
-    setCycles((prevCycles) =>
-      prevCycles.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return {
-            ...cycle,
-            interruptedDate: new Date(),
-          }
-        }
-
-        return cycle
-      }),
-    )
-
-    setActiveCycleId(null)
-  }
-
-  /*
-  function handleCreateNewCycle(data: NewCycleFormData) {
-    const id = new Date().getTime().toString()
-    const newCycle: Cycle = {
-      id,
-      task: data.task,
-      minutesAmount: data.minutesAmount,
-      startDate: new Date(),
-    }
-
-    setCycles((prevCycles) => [...prevCycles, newCycle])
-    setActiveCycleId(id)
-  }
-*/
 
   return (
     <CyclesContext.Provider
       value={{
         cycles,
+        setCycles,
         activeCycleId,
+        setActiveCycleId,
+        amountSecondsPassed,
+        setAmountSecondsPassed,
         activeCycle,
-        handleFinishCycle,
-        markCycleAsFinished,
-        handleInterruptCycle
       }}
     >
       {children}
